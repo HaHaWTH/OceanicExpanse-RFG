@@ -18,8 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public final class GenLayerOceanBiomes extends GenLayer
-{
+public final class GenLayerOceanBiomes extends GenLayer {
     static final int OCEAN = Biome.getIdForBiome(Biomes.OCEAN);
     static final int DEEP_OCEAN = Biome.getIdForBiome(Biomes.DEEP_OCEAN);
     static final int DEEP_FROZEN_OCEAN = Biome.getIdForBiome(Biomes.DEEP_OCEAN); // TODO
@@ -36,7 +35,7 @@ public final class GenLayerOceanBiomes extends GenLayer
     @Nonnull
     @Override
     public int[] getInts(final int areaX, final int areaZ, final int areaWidth, final int areaHeight) {
-        final int[] biomeInts = wrapped.getInts(areaX-1, areaZ-1, areaWidth+2, areaHeight+2).clone();
+        final int[] biomeInts = wrapped.getInts(areaX - 1, areaZ - 1, areaWidth + 2, areaHeight + 2).clone();
         IntCache.resetIntCache();
         //create separate ocean biomes layer
         //this is merged into the main layer wherever the main layer has an ocean biome
@@ -46,13 +45,14 @@ public final class GenLayerOceanBiomes extends GenLayer
                 .getInts(areaX, areaZ, areaWidth, areaHeight);
 
         //merge two layers
-        for(int x = 0; x < areaWidth; x++) {
-            for(int z = 0; z < areaHeight; z++) {
+        for (int x = 0; x < areaWidth; x++) {
+            for (int z = 0; z < areaHeight; z++) {
                 final int biomeId = biomeInts[x + 1 + (z + 1) * (areaWidth + 2)];
                 //convert ocean biomes to deep ocean ones if necessary
-                if(biomeId == DEEP_OCEAN) out[x + z * areaWidth] = handleDeepOceanGen(Biome.getBiomeForId(out[x + z * areaWidth]));
+                if (biomeId == DEEP_OCEAN)
+                    out[x + z * areaWidth] = handleDeepOceanGen(Biome.getBiomeForId(out[x + z * areaWidth]));
                     //re-apply old layer data to the main layer
-                else if(biomeId != OCEAN) out[x + z * areaWidth] = biomeId;
+                else if (biomeId != OCEAN) out[x + z * areaWidth] = biomeId;
             }
         }
 
@@ -68,9 +68,9 @@ public final class GenLayerOceanBiomes extends GenLayer
 
     static int handleDeepOceanGen(@Nullable final Biome shallowOcean) {
         //modded ocean biomes
-        if(shallowOcean instanceof IOceanBiome) {
-            final int deepOcean = ((IOceanBiome)shallowOcean).getDeepOceanBiomeId();
-            if(deepOcean != -1) return deepOcean;
+        if (shallowOcean instanceof IOceanBiome) {
+            final int deepOcean = ((IOceanBiome) shallowOcean).getDeepOceanBiomeId();
+            if (deepOcean != -1) return deepOcean;
         }
 
         //vanilla ocean biomes
@@ -80,14 +80,12 @@ public final class GenLayerOceanBiomes extends GenLayer
     @SubscribeEvent(priority = EventPriority.LOWEST)
     static void handleGenLayerWrappers(@Nonnull final WorldTypeEvent.InitBiomeGens event) {
         final GenLayer[] wrappedLayers = new GenLayer[event.getNewBiomeGens().length];
-        for(int i = 0; i < wrappedLayers.length; i++) {
+        for (int i = 0; i < wrappedLayers.length; i++) {
             final GenLayer layer = event.getNewBiomeGens()[i];
-            if(layer instanceof GenLayerVoronoiZoom) {
+            if (layer instanceof GenLayerVoronoiZoom) {
                 (layer.parent = new GenLayerOceanBiomes(2, layer.parent)).initWorldGenSeed(event.getSeed());
                 wrappedLayers[i] = layer;
-            }
-
-            else (wrappedLayers[i] = new GenLayerOceanBiomes(2, layer)).initWorldGenSeed(event.getSeed());
+            } else (wrappedLayers[i] = new GenLayerOceanBiomes(2, layer)).initWorldGenSeed(event.getSeed());
         }
 
         event.setNewBiomeGens(wrappedLayers);

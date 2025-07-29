@@ -6,20 +6,23 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 public class NoiseGeneratorOceans extends NoiseGeneratorImproved {
-    public NoiseGeneratorOceans(@Nonnull Random rand) { super(rand); }
+    public NoiseGeneratorOceans(@Nonnull Random rand) {
+        super(rand);
+    }
+
     public double getValue(double xIn, double yIn, double zIn) {
         double x = xCoord + xIn;
         double y = yCoord + yIn;
         double z = zCoord + zIn;
 
-        int xi = (int)x;
-        if(x < xi) --xi;
+        int xi = (int) x;
+        if (x < xi) --xi;
 
-        int yi = (int)y;
-        if(y < yi) --yi;
+        int yi = (int) y;
+        if (y < yi) --yi;
 
-        int zi = (int)z;
-        if(z < zi) --zi;
+        int zi = (int) z;
+        if (z < zi) --zi;
 
         x = x - xi;
         y = y - yi;

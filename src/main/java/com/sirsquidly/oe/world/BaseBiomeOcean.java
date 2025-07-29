@@ -13,7 +13,8 @@ public class BaseBiomeOcean extends BiomeOcean implements IOceanBiome {
     @Nonnull
     protected IBlockState surfaceBlock;
 
-    @Nullable protected final Biome deepOceanBiome; // null if this itself is a deep ocean biome
+    @Nullable
+    protected final Biome deepOceanBiome; // null if this itself is a deep ocean biome
     @Nullable
     protected OceanType oceanType; // null if this biome's generation should be handled manually
     protected int deepOceanBiomeIdCache;
@@ -26,20 +27,29 @@ public class BaseBiomeOcean extends BiomeOcean implements IOceanBiome {
 
     @Nonnull
     @Override
-    public IBlockState getOceanSurface() { return surfaceBlock; }
+    public IBlockState getOceanSurface() {
+        return surfaceBlock;
+    }
 
     @Nonnull
     @Override
-    public Biome getMixOceanBiome() { return this; }
+    public Biome getMixOceanBiome() {
+        return this;
+    }
 
     @Nullable
     @Override
-    public OceanType getOceanType() { return oceanType; }
-    public void setOceanType(@Nullable final OceanType type) { oceanType = type; }
+    public OceanType getOceanType() {
+        return oceanType;
+    }
+
+    public void setOceanType(@Nullable final OceanType type) {
+        oceanType = type;
+    }
 
     @Override
     public int getDeepOceanBiomeId() {
-        if(deepOceanBiomeIdCache != 0) return deepOceanBiomeIdCache;
+        if (deepOceanBiomeIdCache != 0) return deepOceanBiomeIdCache;
         else return deepOceanBiomeIdCache = deepOceanBiome != null ? getIdForBiome(deepOceanBiome) : -1;
     }
 }

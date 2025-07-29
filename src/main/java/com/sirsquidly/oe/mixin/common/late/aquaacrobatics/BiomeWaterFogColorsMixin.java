@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.HashMap;
 
+// Register ocean colors to AA
 @Mixin(value = BiomeWaterFogColors.class, remap = false)
 public abstract class BiomeWaterFogColorsMixin {
     @Shadow @Final private static HashMap<ResourceLocation, Integer> baseColorMap;
