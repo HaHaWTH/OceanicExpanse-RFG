@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 public class BiomeWarmOcean extends BiomeSandOcean {
     public BiomeWarmOcean(@Nullable Biome deepOceanBiomeIn, @Nonnull BiomeProperties propertiesIn) {
         super(deepOceanBiomeIn, propertiesIn);
+        waterColor = 4445678;
     }
 
     @Nonnull
