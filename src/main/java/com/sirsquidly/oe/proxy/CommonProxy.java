@@ -2,10 +2,14 @@ package com.sirsquidly.oe.proxy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
 import com.sirsquidly.oe.Main;
+import com.sirsquidly.oe.api.biome.IOceanBiome;
+import com.sirsquidly.oe.api.biome.OceanType;
 import com.sirsquidly.oe.capabilities.CapabilityRiptide;
 import com.sirsquidly.oe.entity.item.EntityTrident;
 import com.sirsquidly.oe.init.OEBlocks;
@@ -24,6 +28,7 @@ import com.sirsquidly.oe.util.handlers.GuiHandler;
 import com.sirsquidly.oe.util.handlers.RenderHandler;
 import com.sirsquidly.oe.world.*;
 import com.sirsquidly.oe.world.feature.*;
+import com.sirsquidly.oe.world.noise.gen.GenLayerOceanBiomes;
 import com.sirsquidly.oe.world.structure.GeneratorCoquinaOutcrop;
 import com.sirsquidly.oe.world.structure.GeneratorShipwreck;
 
@@ -37,8 +42,11 @@ import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.structure.StructureOceanMonument;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.common.BiomeManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -46,6 +54,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -72,13 +81,7 @@ public class CommonProxy
 		GameRegistry.registerTileEntity(TilePrismarinePot.class, new ResourceLocation(Main.MOD_ID, "prismarine_pot"));
 		GameRegistry.registerTileEntity(TileStasis.class, new ResourceLocation(Main.MOD_ID, "stagnant"));
 		
-		allOceans.addAll(BiomeDictionary.getBiomes(Type.OCEAN));
-		allOceans.addAll(BiomeDictionary.getBiomes(Type.BEACH));
-		
 		OEEntities.registerEntities();
-		GameRegistry.registerWorldGenerator(new GeneratorWarmOcean(allOceans.toArray(new Biome[0])), 0);
-		GameRegistry.registerWorldGenerator(new GeneratorFrozenOcean(allOceans.toArray(new Biome[0])), 0);
-		registerWorldGen();
 		
 		if (ConfigHandler.vanillaTweak.waterTweak != 3)
 		{
@@ -102,6 +105,44 @@ public class CommonProxy
 			fluidlogged_enable = true;
 		}
 		NetworkRegistry.INSTANCE.registerGuiHandler(Main.instance, new GuiHandler());
+		MinecraftForge.TERRAIN_GEN_BUS.register(GenLayerOceanBiomes.class);
+		//automatically add all IOceanBiome instances to the Forge ocean biomes list
+		OceanType.DEFAULT.registerBiome(Biomes.OCEAN, 100);
+		ForgeRegistries.BIOMES.forEach(biome -> {
+			if(biome instanceof IOceanBiome) {
+				if(!BiomeManager.oceanBiomes.contains(biome)) BiomeManager.oceanBiomes.add(biome);
+				final IOceanBiome ocean = (IOceanBiome)biome;
+				if(ocean.getDeepOceanBiomeId() != -1 && ocean.getOceanType() != null) ocean.getOceanType().registerBiome(biome, 100);
+			}
+		});
+
+		//generate ocean biome id sets
+		BiomeManager.oceanBiomes.forEach(biome -> {
+			final int biomeId = Biome.getIdForBiome(biome);
+			IOceanBiome.OCEAN_IDS.add(biomeId);
+
+			if(biome instanceof IOceanBiome && ((IOceanBiome)biome).getDeepOceanBiomeId() != -1) IOceanBiome.SHALLOW_OCEAN_IDS.add(biomeId);
+		});
+
+		//automatically update valid ocean monument spawn biomes
+		StructureOceanMonument.SPAWN_BIOMES = new ArrayList<>(ImmutableList.<Biome>builder()
+				.add(Biomes.DEEP_OCEAN)
+				.addAll(BiomeManager.oceanBiomes.stream()
+						.filter(biome -> biome instanceof IOceanBiome && ((IOceanBiome)biome).getDeepOceanBiomeId() == -1)
+						.collect(Collectors.toList()))
+				.build());
+		//automatically update valid ocean monument neighbor biomes
+		StructureOceanMonument.WATER_BIOMES = new ArrayList<>(ImmutableList.<Biome>builder()
+				.addAll(BiomeManager.oceanBiomes)
+				.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.RIVER))
+				.build());
+		//ocean monuments spawning in these biomes causes problems
+		//StructureOceanMonument.SPAWN_BIOMES.removeIf(biome -> biome instanceof BiomeFrozenOcean);
+		allOceans.addAll(BiomeDictionary.getBiomes(Type.OCEAN));
+		allOceans.addAll(BiomeDictionary.getBiomes(Type.BEACH));
+		GameRegistry.registerWorldGenerator(new GeneratorWarmOcean(allOceans.toArray(new Biome[0])), 0);
+		GameRegistry.registerWorldGenerator(new GeneratorFrozenOcean(allOceans.toArray(new Biome[0])), 0);
+		registerWorldGen();
 	}
 
 	public void postInitRegistries(FMLPostInitializationEvent event)

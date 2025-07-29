@@ -1,0 +1,77 @@
+package com.sirsquidly.oe.init;
+
+import com.sirsquidly.oe.Main;
+import com.sirsquidly.oe.api.biome.OceanType;
+import com.sirsquidly.oe.world.biome.BiomeSandOcean;
+import com.sirsquidly.oe.world.biome.BiomeWarmOcean;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import javax.annotation.Nonnull;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Consumer;
+
+@Mod.EventBusSubscriber(modid = Main.MOD_ID)
+public class OEBiomes {
+    // Init
+    @Nonnull
+    public static final List<Biome> INIT = new LinkedList<>();
+
+    // Deep Biomes
+    @Nonnull public static final BiomeWarmOcean DEEP_WARM_OCEAN = register("deep_warm_ocean",
+            new BiomeWarmOcean(null, new Biome.BiomeProperties("Deep Warm Ocean").setBaseHeight(-1.8f).setHeightVariation(0.1f).setTemperature(0.5f).setRainfall(0.5f)));
+
+    @Nonnull public static final BiomeSandOcean DEEP_LUKEWARM_OCEAN = register("deep_lukewarm_ocean",
+            new BiomeSandOcean(null, new Biome.BiomeProperties("Deep Lukewarm Ocean").setBaseHeight(-1.8f).setHeightVariation(0.1f).setTemperature(0.5f).setRainfall(0.5f)));
+
+    @Nonnull public static final BiomeSandOcean DEEP_COLD_OCEAN = register("deep_cold_ocean",
+            new BiomeSandOcean(null, new Biome.BiomeProperties("Deep Cold Ocean").setBaseHeight(-1.8f).setHeightVariation(0.1f).setTemperature(0.5f).setRainfall(0.5f)));
+
+//    @Nonnull public static final BiomeFrozenOcean DEEP_FROZEN_OCEAN = register("deep_frozen_ocean",
+   //         new BiomeFrozenOcean(new Biome.BiomeProperties("Deep Frozen Ocean").setBaseHeight(-1.8f).setHeightVariation(0.1f).setTemperature(0.5f).setRainfall(0.5f).setSnowEnabled()));
+
+    // Shallow Biomes
+    @Nonnull public static final BiomeWarmOcean WARM_OCEAN = register("warm_ocean",
+            new BiomeWarmOcean(DEEP_WARM_OCEAN, new Biome.BiomeProperties("Warm Ocean").setBaseHeight(-1).setHeightVariation(0.1f).setTemperature(0.5f).setRainfall(0.5f)));
+
+    @Nonnull public static final BiomeSandOcean LUKEWARM_OCEAN = register("lukewarm_ocean",
+            new BiomeSandOcean(DEEP_LUKEWARM_OCEAN, new Biome.BiomeProperties("Lukewarm Ocean").setBaseHeight(-1).setHeightVariation(0.1f).setTemperature(0.5f).setRainfall(0.5f)), biome -> biome.setOceanType(OceanType.LUKEWARM));
+
+    @Nonnull public static final BiomeSandOcean COLD_OCEAN = register("cold_ocean",
+            new BiomeSandOcean(DEEP_COLD_OCEAN, new Biome.BiomeProperties("Cold Ocean").setBaseHeight(-1).setHeightVariation(0.1f).setTemperature(0.5f).setRainfall(0.5f)), biome -> biome.setOceanType(OceanType.COLD));
+
+    // Biome Dictionary
+    static void registerBiomeDictionary() {
+        BiomeDictionary.addTypes(DEEP_WARM_OCEAN, BiomeDictionary.Type.HOT, BiomeDictionary.Type.OCEAN);
+        BiomeDictionary.addTypes(DEEP_LUKEWARM_OCEAN, BiomeDictionary.Type.HOT, BiomeDictionary.Type.OCEAN);
+        BiomeDictionary.addTypes(DEEP_COLD_OCEAN, BiomeDictionary.Type.COLD, BiomeDictionary.Type.OCEAN);
+//        BiomeDictionary.addTypes(DEEP_FROZEN_OCEAN, BiomeDictionary.Type.COLD, BiomeDictionary.Type.OCEAN, BiomeDictionary.Type.SNOWY);
+        BiomeDictionary.addTypes(WARM_OCEAN, BiomeDictionary.Type.HOT, BiomeDictionary.Type.OCEAN);
+        BiomeDictionary.addTypes(LUKEWARM_OCEAN, BiomeDictionary.Type.HOT, BiomeDictionary.Type.OCEAN);
+        BiomeDictionary.addTypes(COLD_OCEAN, BiomeDictionary.Type.COLD, BiomeDictionary.Type.OCEAN);
+    }
+
+    //registry
+    @Nonnull
+    static <T extends Biome> T register(@Nonnull String name, @Nonnull T biome) {
+        INIT.add(biome.setRegistryName(Main.MOD_ID, name));
+        return biome;
+    }
+
+    @Nonnull
+    static <T extends Biome> T register(@Nonnull String name, @Nonnull T biome, @Nonnull final Consumer<T> properties) {
+        properties.accept(biome);
+        return register(name, biome);
+    }
+
+    @SubscribeEvent
+    static void registerBiomes(@Nonnull RegistryEvent.Register<Biome> event) {
+        INIT.forEach(event.getRegistry()::register);
+        registerBiomeDictionary();
+        System.out.println("Registering Biomes...");
+    }
+}
