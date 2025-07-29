@@ -20,6 +20,7 @@ public class BaseBiomeOcean extends BiomeOcean implements IOceanBiome {
 
     public BaseBiomeOcean(@Nullable Biome deepOceanBiomeIn, @Nonnull BiomeProperties propertiesIn) {
         super(propertiesIn);
+        surfaceBlock = GRAVEL;
         deepOceanBiome = deepOceanBiomeIn;
     }
 
