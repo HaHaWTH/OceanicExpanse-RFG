@@ -11,5 +11,6 @@ public class BiomeSandOcean extends BaseBiomeOcean {
     public BiomeSandOcean(@Nullable Biome deepOceanBiomeIn, @Nonnull BiomeProperties propertiesIn) {
         super(deepOceanBiomeIn, propertiesIn);
         surfaceBlock = Blocks.SAND.getDefaultState();
+        waterColor = 4566514;
     }
 }
