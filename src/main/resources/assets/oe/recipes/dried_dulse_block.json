@@ -1,0 +1,18 @@
+{
+  "conditions":
+  [
+    { "type": "config", "prop": "enableDusle" }
+  ],
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": { "item": "oe:dried_dulse" }	
+  },
+  "result": {
+    "item": "oe:dried_dulse_block"
+  }
+}

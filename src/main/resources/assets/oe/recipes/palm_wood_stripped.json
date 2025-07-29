@@ -1,0 +1,18 @@
+{
+  "conditions":
+  [
+    { "type": "config", "prop": "enablePalmWoods" }
+  ],
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": { "item": "oe:palm_log_stripped" }	
+  },
+  "result": {
+    "item": "oe:palm_wood_stripped",
+    "count": 3
+  }
+}

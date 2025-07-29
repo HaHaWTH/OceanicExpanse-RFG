@@ -1,0 +1,28 @@
+{
+  "conditions":
+  [
+    {
+      "type": "config",
+      "prop": "enableCoquina"
+    }
+  ],
+  "type": "forge:ore_shaped",
+  "group": "coquina",
+  "pattern": [
+    "wb",
+    "bw"
+  ],
+  "key": {
+    "b":
+    [
+      { "item": "oe:barnacle_shells" },
+      { "item": "oe:crustacean_shell" },
+      { "item": "oe:turtle_scute" }
+    ],
+    "w": { "item": "minecraft:dye", "data":15 }
+  },
+  "result": {
+    "item": "oe:coquina",
+    "count": 1
+  }
+}

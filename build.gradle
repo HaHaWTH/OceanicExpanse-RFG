@@ -107,9 +107,29 @@ repositories {
         name 'CleanroomMC Maven'
         url 'https://maven.cleanroommc.com'
     }
+    maven {
+        // Fluidlogged API files
+        url 'https://jitpack.io'
+    }
+    maven {
+        //JEI files
+        name = "DVS1 Maven FS"
+        url = "http://dvs1.progwml6.com/files/maven"
+        allowInsecureProtocol = true
+    }
+    maven {
+        // Fallback maven mirror for JEI files
+        name = "ModMaven"
+        url = "https://modmaven.dev"
+    }
 }
 
 dependencies {
+    compileOnly rfg.deobf("com.github.jbredwards:fluidlogged-api:${fluidlogged_api_version}")
+    compileOnly rfg.deobf("mezz.jei:jei_1.12.2:${jei_version}")
+
+    /* Replace the file ID with the desired version */
+    compileOnly rfg.deobf("curse.maven:aquaacrobatics-321792:${aqua_acrobatics_version}")
     if (propertyBool('use_modern_java_syntax')) {
         annotationProcessor 'com.github.bsideup.jabel:jabel-javac-plugin:1.0.0'
         // Workaround for https://github.com/bsideup/jabel/issues/174

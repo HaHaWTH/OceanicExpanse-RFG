@@ -1,0 +1,25 @@
+{
+  "conditions":
+  [
+    {
+      "type": "config",
+      "prop": "enableCoquina"
+    },
+    {
+      "type": "config",
+      "prop": "enableCoquinaBricks"
+    }
+  ],
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": { "item": "oe:coquina" }	
+  },
+  "result": {
+    "item": "oe:coquina_brick",
+    "count": 4
+  }
+}
