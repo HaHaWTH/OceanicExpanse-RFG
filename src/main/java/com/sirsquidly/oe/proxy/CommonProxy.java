@@ -12,6 +12,7 @@ import com.sirsquidly.oe.api.biome.IOceanBiome;
 import com.sirsquidly.oe.api.biome.OceanType;
 import com.sirsquidly.oe.capabilities.CapabilityRiptide;
 import com.sirsquidly.oe.entity.item.EntityTrident;
+import com.sirsquidly.oe.init.OEBiomes;
 import com.sirsquidly.oe.init.OEBlocks;
 import com.sirsquidly.oe.init.OEEntities;
 import com.sirsquidly.oe.init.OESounds;
@@ -140,7 +141,7 @@ public class CommonProxy
 		//StructureOceanMonument.SPAWN_BIOMES.removeIf(biome -> biome instanceof BiomeFrozenOcean);
 		allOceans.addAll(BiomeDictionary.getBiomes(Type.OCEAN));
 		allOceans.addAll(BiomeDictionary.getBiomes(Type.BEACH));
-		GameRegistry.registerWorldGenerator(new GeneratorWarmOcean(allOceans.toArray(new Biome[0])), 0);
+		GameRegistry.registerWorldGenerator(new GeneratorWarmOcean(OEBiomes.WARM_OCEAN, OEBiomes.DEEP_WARM_OCEAN), 0);
 		GameRegistry.registerWorldGenerator(new GeneratorFrozenOcean(allOceans.toArray(new Biome[0])), 0);
 		registerWorldGen();
 	}
