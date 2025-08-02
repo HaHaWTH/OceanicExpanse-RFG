@@ -90,8 +90,8 @@ public class GeneratorWarmOcean implements IWorldGenerator
 				if (isValidBiome && warmOceanNoiseGen > warmOceanNoiseMin)
 				{
 					mutablePos.setPos(posWaterFloor.down());
-					if (world.getBlockState(mutablePos).getBlock() == Blocks.GRAVEL)
-					{ world.setBlockState(mutablePos, Blocks.SAND.getDefaultState(), 16 | 2); }
+					//if (world.getBlockState(mutablePos).getBlock() == Blocks.GRAVEL)
+					//{ world.setBlockState(mutablePos, Blocks.SAND.getDefaultState(), 16 | 2); }
 				}
 
 				if (x == 15 && z == 15)
